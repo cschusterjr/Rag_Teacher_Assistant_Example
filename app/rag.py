@@ -19,11 +19,17 @@ class RAGPipeline:
         for name, text in docs:
             chunks = chunk_text(text)
 
+            metadata = {
+                "source": name,
+                "document_type": "curriculum",
+            }
+
             for chunk_index, chunk in enumerate(chunks):
                 self.store.add_chunk(
                     document_name=name,
                     chunk_text=chunk,
                     chunk_index=chunk_index,
+                    metadata=metadata,
                 )
 
         corpus = [text for _, text in self.store.iter_chunks()]
@@ -47,13 +53,14 @@ class RAGPipeline:
             record = self.store.get(chunk_id)
 
             results.append(
-        {
-            "chunk_id": chunk_id,
-            "source": record["document_name"],
-            "chunk_index": record["chunk_index"],
-            "score": float(similarities[index]),
-            "content": record["chunk_text"],
-        }
-    )
+                {
+                    "chunk_id": chunk_id,
+                    "source": record["document_name"],
+                    "chunk_index": record["chunk_index"],
+                    "score": float(similarities[index]),
+                    "content": record["chunk_text"],
+                    "metadata": record["metadata"],
+                }
+            )
 
         return results

@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from typing import List
 from .rag import RAGPipeline
+from .generator import generate_answer
 
 app = FastAPI(title="RAG Teacher Assistant")
 rag = RAGPipeline()
@@ -16,4 +17,11 @@ async def ingest(docs: List[UploadFile]):
 @app.post("/query")
 async def query(q: str = Form(...), k: int = Form(3)):
     results = rag.search(q, k=k)
-    return {"query": q, "results": results}
+
+    answer = generate_answer(q, results)
+
+    return {
+        "question": q,
+        "answer": answer,
+        "sources": results,
+    }

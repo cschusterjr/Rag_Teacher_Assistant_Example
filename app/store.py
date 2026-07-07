@@ -5,11 +5,18 @@ class SimpleStore:
     def __init__(self):
         self.chunks: List[Dict] = []
 
-    def add_chunk(self, document_name: str, chunk_text: str, chunk_index: int) -> int:
+    def add_chunk(
+        self,
+        document_name: str,
+        chunk_text: str,
+        chunk_index: int,
+        metadata: Dict | None = None,
+    ) -> int:
         record = {
             "document_name": document_name,
             "chunk_text": chunk_text,
             "chunk_index": chunk_index,
+            "metadata": metadata or {},
         }
 
         self.chunks.append(record)
