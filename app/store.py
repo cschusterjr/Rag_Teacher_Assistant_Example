@@ -1,16 +1,23 @@
-from typing import Tuple, Iterator, List
+from typing import Dict, Iterator, List, Tuple
+
 
 class SimpleStore:
     def __init__(self):
-        self.docs: List[Tuple[str,str]] = []  # (name, text)
+        self.chunks: List[Dict] = []
 
-    def add(self, name: str, text: str) -> int:
-        self.docs.append((name, text))
-        return len(self.docs) - 1
+    def add_chunk(self, document_name: str, chunk_text: str, chunk_index: int) -> int:
+        record = {
+            "document_name": document_name,
+            "chunk_text": chunk_text,
+            "chunk_index": chunk_index,
+        }
 
-    def get(self, idx: int) -> Tuple[str, str]:
-        return self.docs[idx]
+        self.chunks.append(record)
+        return len(self.chunks) - 1
 
-    def iter_docs(self) -> Iterator[Tuple[int, str]]:
-        for i, (name, text) in enumerate(self.docs):
-            yield (i, text)
+    def get(self, idx: int) -> Dict:
+        return self.chunks[idx]
+
+    def iter_chunks(self) -> Iterator[Tuple[int, str]]:
+        for i, record in enumerate(self.chunks):
+            yield i, record["chunk_text"]

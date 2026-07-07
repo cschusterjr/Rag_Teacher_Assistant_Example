@@ -1,8 +1,12 @@
-from typing import List, Tuple, Dict
-from .store import SimpleStore
+from typing import Dict, List, Tuple
+
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+from .chunking import chunk_text
+from .store import SimpleStore
+
 
 class RAGPipeline:
     def __init__(self):
@@ -13,21 +17,43 @@ class RAGPipeline:
 
     def ingest(self, docs: List[Tuple[str, str]]):
         for name, text in docs:
-            self.store.add(name, text)
-        corpus = [t for _, t in self.store.iter_docs()]
+            chunks = chunk_text(text)
+
+            for chunk_index, chunk in enumerate(chunks):
+                self.store.add_chunk(
+                    document_name=name,
+                    chunk_text=chunk,
+                    chunk_index=chunk_index,
+                )
+
+        corpus = [text for _, text in self.store.iter_chunks()]
+
         if corpus:
             self._matrix = self.vectorizer.fit_transform(corpus)
-            self._ids = [i for i, _ in self.store.iter_docs()]
+            self._ids = [chunk_id for chunk_id, _ in self.store.iter_chunks()]
 
-    def search(self, query: str, k: int = 3):
+    def search(self, query: str, k: int = 3) -> List[Dict]:
         if self._matrix is None:
             return []
-        qv = self.vectorizer.transform([query])
-        sims = cosine_similarity(qv, self._matrix).ravel()
-        idx = np.argsort(-sims)[:k]
+
+        query_vector = self.vectorizer.transform([query])
+        similarities = cosine_similarity(query_vector, self._matrix).ravel()
+        ranked_indexes = np.argsort(-similarities)[:k]
+
         results = []
-        for i in idx:
-            doc_id = self._ids[i]
-            name, text = self.store.get(doc_id)
-            results.append({"doc_id": doc_id, "name": name, "score": float(sims[i]), "snippet": text[:300]})
+
+        for index in ranked_indexes:
+            chunk_id = self._ids[index]
+            record = self.store.get(chunk_id)
+
+            results.append(
+                {
+                    "chunk_id": chunk_id,
+                    "document_name": record["document_name"],
+                    "chunk_index": record["chunk_index"],
+                    "score": float(similarities[index]),
+                    "snippet": record["chunk_text"],
+                }
+            )
+
         return results
