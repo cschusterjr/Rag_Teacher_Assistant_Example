@@ -2,9 +2,13 @@ from fastapi import FastAPI, UploadFile, File, Form
 from typing import List
 from .generation.generator import generate_answer
 from .retrieval.rag import RAGPipeline
+from .ingestion.loader import load_curriculum_documents
 
 app = FastAPI(title="RAG Teacher Assistant")
 rag = RAGPipeline()
+
+curriculum_docs = load_curriculum_documents("data/curriculum")
+rag.ingest(curriculum_docs)
 
 @app.post("/ingest")
 async def ingest(docs: List[UploadFile]):
