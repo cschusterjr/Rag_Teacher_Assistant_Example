@@ -7,6 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from app.ingestion.chunking import chunk_text
 from app.ingestion.metadata import extract_metadata
 from app.retrieval.store import SimpleStore
+from app.retrieval.query_parser import parse_query
 
 class RAGPipeline:
     def __init__(self):
@@ -38,6 +39,9 @@ class RAGPipeline:
             self._ids = [chunk_id for chunk_id, _ in self.store.iter_chunks()]
 
     def search(self, query: str, k: int = 3) -> List[Dict]:
+        filters = parse_query(query)
+        if filters:
+            print(f"Detected query filters: {filters}")
         if self._matrix is None:
             return []
 
