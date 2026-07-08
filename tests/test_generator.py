@@ -1,4 +1,4 @@
-from app.generator import generate_answer
+from app.generation.generator import generate_answer
 
 
 def test_generate_answer_with_results():

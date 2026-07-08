@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from typing import List
-from .rag import RAGPipeline
-from .generator import generate_answer
+from .generation.generator import generate_answer
+from .retrieval.rag import RAGPipeline
 
 app = FastAPI(title="RAG Teacher Assistant")
 rag = RAGPipeline()

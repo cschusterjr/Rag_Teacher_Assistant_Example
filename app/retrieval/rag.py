@@ -4,9 +4,9 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from .chunking import chunk_text
-from .store import SimpleStore
-
+from app.ingestion.chunking import chunk_text
+from app.ingestion.metadata import extract_metadata
+from app.retrieval.store import SimpleStore
 
 class RAGPipeline:
     def __init__(self):
@@ -19,10 +19,9 @@ class RAGPipeline:
         for name, text in docs:
             chunks = chunk_text(text)
 
-            metadata = {
-                "source": name,
-                "document_type": "curriculum",
-            }
+            metadata = extract_metadata(text)
+            metadata["source"] = name
+            metadata["document_type"] = "curriculum"
 
             for chunk_index, chunk in enumerate(chunks):
                 self.store.add_chunk(
