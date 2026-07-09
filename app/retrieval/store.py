@@ -28,3 +28,21 @@ class SimpleStore:
     def iter_chunks(self) -> Iterator[Tuple[int, str]]:
         for i, record in enumerate(self.chunks):
             yield i, record["chunk_text"]
+
+    def iter_filtered_chunks(self, filters: Dict) -> Iterator[Tuple[int, str]]:
+        """
+        Yield only chunks whose metadata matches the supplied filters.
+        """
+
+        for i, record in enumerate(self.chunks):
+            metadata = record["metadata"]
+
+            matches = True
+
+            for key, value in filters.items():
+                if metadata.get(key) != value:
+                    matches = False
+                    break
+
+            if matches:
+                yield i, record["chunk_text"]
