@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Teacher Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>AI Teacher Assistant</h1>
+    <p>Ask a question about the curriculum documents.</p>
+
+    <section>
+      <label for="question">Teacher Question</label>
+      <input id="question" type="text" placeholder="Example: Show me Grade 4 math lessons." />
+      <button onclick="askQuestion()">Ask</button>
+    </section>
+
+    <section>
+      <h2>Answer</h2>
+      <div id="answer">No question submitted yet.</div>
+    </section>
+
+    <section>
+      <h2>Sources</h2>
+      <div id="sources"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

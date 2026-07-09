@@ -1,0 +1,39 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+}
+
+input {
+  width: 70%;
+  padding: 10px;
+  margin-right: 8px;
+}
+
+button {
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+#answer {
+  padding: 16px;
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+.source-card {
+  padding: 16px;
+  margin-top: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+}
